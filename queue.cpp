@@ -1,6 +1,5 @@
 #include "queue.hpp"
 
-
 void destroyQ(p_queue q){
     if(q->root == NULL){
         printf("Queue already destroyed\n");
@@ -28,38 +27,40 @@ p_queue createQ(){
 
 void enQ(void *object, p_queue q){
     p_node new_n = (p_node)malloc(sizeof(Node));
+    // if malloc failed
+    if(new_n == NULL){
+        printf("malloc failed :(\n");
+        return;
+    }
     new_n->object = object;
     new_n->next = NULL;
 
-    if(q->root == NULL){
-        q->tail = new_n;
-        q->root = new_n;
-        q->size++;
-    }
-
-    // q->root != NULL
-    else{
+    // if there is a tail, connect that tail to the new node
+    if(q->tail != NULL){
         q->tail->next = new_n;
-        q->tail = new_n;
-        q->size++;
+    }
+    q->tail = new_n;
+
+    if(q->root == NULL){
+        q->root = new_n;
     }
 }
 
 void *deQ(p_queue q){
-    if(isEmpty(q) == 0){
+    if(q->root == NULL){
         printf("Queue is empty\n");
         return;
     }
 
     p_node curr = q->root;
+    void *result = curr->object;
     q->root = q->root->next;
-    // check if root is null
+
     if(q->root == NULL){
         q->tail = NULL;
     }
-
-    return curr->object;
     free(curr);
+    return result;
 }
 
 int isEmpty(p_queue q){
