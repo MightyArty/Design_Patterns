@@ -14,6 +14,7 @@ void destroyQ(p_queue q){
         q->root = q->root->next;
         free(curr);
     }
+    q->size = 0;
 }
 
 p_queue createQ(){
@@ -44,6 +45,7 @@ void enQ(void *object, p_queue q){
     if(q->root == NULL){
         q->root = new_n;
     }
+    q->size++;
 }
 
 void *deQ(p_queue q){
@@ -59,6 +61,7 @@ void *deQ(p_queue q){
     if(q->root == NULL){
         q->tail = NULL;
     }
+    q->size--;
     free(curr);
     return result;
 }
