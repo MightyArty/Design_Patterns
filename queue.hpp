@@ -17,8 +17,6 @@ typedef struct Node
 
 typedef struct queue
 {
-    pthread_mutex_t q_mutex;
-    pthread_cond_t q_con;
     p_node root;
     p_node tail;
     int size;
@@ -57,3 +55,9 @@ void *deQ(p_queue q);
  * @return 0 if empty, 1 if not
  */
 int isEmpty(p_queue q);
+
+/**
+ * initializing mutex and condition variable
+ */
+pthread_cond_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
