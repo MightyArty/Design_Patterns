@@ -1,4 +1,10 @@
-#include "queue.hpp"
+#include "queue.h"
+
+/**
+ * initializing mutex and condition variable
+ */
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 p_queue createQ(){
     p_queue new_q = (p_queue)malloc(sizeof(queue));
@@ -66,8 +72,25 @@ void *deQ(p_queue q){
 }
 
 int isEmpty(p_queue q){
+
     if(q->size == 0)
         return 0;
     else
         return 1;
+}
+
+int main(){
+    p_queue q = createQ();
+
+    deQ(q); // should throw
+    enQ((int *)1, q);
+    enQ((int *)2, q);
+    enQ((int *)3, q);
+    enQ((int *)4, q);
+    deQ(q); //1
+    deQ(q); //2
+    printf("root is: %d", (int *)(q->root->object));
+    printf("tail is: %d", (int *)(q->tail->object));
+    destroyQ(q);
+
 }

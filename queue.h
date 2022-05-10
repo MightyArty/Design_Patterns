@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /**
  * 1. qreate queue
@@ -56,8 +57,4 @@ void *deQ(p_queue q);
  */
 int isEmpty(p_queue q);
 
-/**
- * initializing mutex and condition variable
- */
-pthread_cond_t lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
