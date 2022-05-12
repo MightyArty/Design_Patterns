@@ -145,17 +145,4 @@ int main(){
     pthread_join(thread1[1], NULL);
     return 1;
 
-
-    
-    // deQ(q); // should throw
-    // enQ((int *)1, q);
-    // enQ((int *)2, q);
-    // enQ((int *)3, q);
-    // enQ((int *)4, q);
-    // deQ(q); //1
-    // deQ(q); //2
-    // printf("root is: %d", (int *)(q->root->object));
-    // printf("tail is: %d", (int *)(q->tail->object));
-    // destroyQ(q);
-
 }

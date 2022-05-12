@@ -13,20 +13,21 @@ active_object::~active_object()
 {
 }
 
-void active_object::newAO(p_queue q, void *(*func1)(void *), void *(*func2)(void *)){
-    
+void *active_object::newAO(p_queue q, void *(*func1)(void *), void *(*func2)(void *)){
+    struct active_object *a_o = (struct active_object *)malloc(sizeof(struct active_object));
+    a_o->q = q;
+    a_o->func1 = func1;
+    a_o->func2 = func2;
+    while(q->root != NULL){
+        printf("Multiplying the node by 4\n");
+        func1(q->root->object);
+    }
+    func2(q);
+    return a_o;
 }
-void active_object::destroyAO(struct a_object *a_obj){
 
-}
-void *newAO(p_queue q, void *(*func1)(void *), void *(*func2)(void *)){
-     while(q->root != NULL){
-         printf("Multiplying the node by 4\n");
-         func1(q->root->object);
-     }
-     printf("Deviding all nodes by 2\n");
-     func2(q);
-     return 0;
+void active_object::destroyAO(struct a_object *a_obj){
+    free(a_obj);
 }
 
 void *func1(void *element){
