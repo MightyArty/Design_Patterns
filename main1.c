@@ -1,4 +1,25 @@
-#include "queue.h"
+#include "active_object.h"
+
+void red()
+{
+    printf("\033[1;31m");
+}
+void yellow()
+{
+    printf("\033[1;33m");
+}
+void blue()
+{
+    printf("\033[0;34m");
+}
+void green()
+{
+    printf("\033[0;32m");
+}
+void reset()
+{
+    printf("\033[0m");
+}
 
 /**
  * initializing mutex and condition variable
@@ -77,6 +98,39 @@ int isEmpty(p_queue q){
         return 0;
     else
         return 1;
+}
+
+void *newAO(p_queue q, void *(*func1)(void *), void *(*func2)(void *)){
+     while(q->root != NULL){
+         red();
+         printf("Multiplying the node by 4\n");
+         func1(q->root->object);
+     }
+     yellow();
+     printf("Deviding all nodes by 2\n");
+     reset();
+     func2(q);
+}
+
+void *func1(void *element){
+    // need to do something on every element of the queue
+    if(element == NULL){
+        printf("node does not exist\n");
+    }
+
+    element = (int)element * 4;
+}
+
+void *func2(p_queue q){
+    // need to do something after func1() finish to run
+    if(q->root == NULL){
+        printf("Queue is empty\n");
+    }
+
+    while(q->root != NULL){
+        q->root->object = (int)q->root->object / 2; // deviding every node by 2
+    }
+
 }
 
 int main(){

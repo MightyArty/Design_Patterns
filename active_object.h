@@ -1,10 +1,10 @@
-#include "queue.hpp"
+#include "queue.h"
 
-struct a_objcet{
+typedef struct a_objcet{
     p_queue q;
-    void *(*A)(void*);
-    void *(*B)(void*);
-};
+    void *(*func1)(void *);
+    void *(*func2)(void *);
+}obj, *p_obj;
 
 /**
  * @brief this function will get 3 parameters
@@ -13,7 +13,7 @@ struct a_objcet{
  * 3. function that deals with cleanup the queue object
  * @return struct a_object* 
  */
-struct a_object *newAO(p_queue *, void* (void*), void* (void*));
+void *newAO(p_queue, void *(*)(void *), void *(*)(void *));
 
 /**
  * @brief this function will get 1 parameter
