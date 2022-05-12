@@ -1,3 +1,4 @@
+#pragma once
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,12 +17,15 @@ typedef struct Node
     void *object;
 } Node, *p_node;
 
+#ifndef __Q__
+#define __Q__
 typedef struct queue
 {
     p_node root;
     p_node tail;
     int size;
 } queue, *p_queue;
+#endif
 
 /**
  * @brief create new queue

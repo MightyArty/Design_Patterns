@@ -1,4 +1,7 @@
-#include "active_object.h"
+#include "queue.hpp"
+#include <iostream>
+
+p_queue q;
 
 void red()
 {
@@ -24,8 +27,10 @@ void reset()
 /**
  * initializing mutex and condition variable
  */
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+// pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+// pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t lock;
+pthread_cond_t cond;
 
 p_queue createQ(){
     p_queue new_q = (p_queue)malloc(sizeof(queue));
@@ -49,6 +54,7 @@ void destroyQ(p_queue q){
 }
 
 void enQ(void *object, p_queue q){
+    pthread_mutex_lock(&lock);
     p_node new_n = (p_node)malloc(sizeof(Node));
     if(new_n == NULL){
         printf("malloc failed :(\n");
@@ -57,18 +63,21 @@ void enQ(void *object, p_queue q){
 
     new_n->object = object;
     new_n->next = NULL;
-
+    
     if(q->root == NULL){
         q->root = new_n;
         q->tail = new_n;
-        pthread_cond_signal(&cond);
-        return;
     }
 
     // update the tail to the new node
-    q->tail->next = new_n;
-    q->tail = new_n;
+    else {
+        q->tail->next = new_n;
+        q->tail = new_n;
+    }
     q->size++;
+    pthread_mutex_unlock(&lock);
+    pthread_cond_broadcast(&cond);
+    printf("end\n");
 }
 
 void *deQ(p_queue q){
@@ -78,7 +87,7 @@ void *deQ(p_queue q){
         printf("Queue is empty\n");
         pthread_cond_wait(&cond, &lock);
     }
-
+    printf("hey\n");
     p_node curr = q->root;
     void *result = curr->object;
     q->root = q->root->next;
@@ -87,8 +96,8 @@ void *deQ(p_queue q){
         q->tail = NULL;
     }
     q->size--;
-    free(curr);
     pthread_mutex_unlock(&lock);
+    free(curr);
     return result;
 }
 
@@ -100,51 +109,53 @@ int isEmpty(p_queue q){
         return 1;
 }
 
-void *newAO(p_queue q, void *(*func1)(void *), void *(*func2)(void *)){
-     while(q->root != NULL){
-         red();
-         printf("Multiplying the node by 4\n");
-         func1(q->root->object);
-     }
-     yellow();
-     printf("Deviding all nodes by 2\n");
-     reset();
-     func2(q);
-}
-
-void *func1(void *element){
-    // need to do something on every element of the queue
-    if(element == NULL){
-        printf("node does not exist\n");
-    }
-
-    element = (int)element * 4;
-}
-
-void *func2(p_queue q){
-    // need to do something after func1() finish to run
-    if(q->root == NULL){
-        printf("Queue is empty\n");
-    }
-
-    while(q->root != NULL){
-        q->root->object = (int)q->root->object / 2; // deviding every node by 2
-    }
-
+void *task1(void *a){
+    sleep(3);
+    enQ((void *)"1", q);
+    enQ((void *)"2", q);
+    enQ((void *)"3", q);
+    enQ((void *)"4", q);
+    enQ((void *)"5", q);
+    return 0;
 }
 
 int main(){
-    p_queue q = createQ();
+    q = createQ();
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        printf("\n mutex init has failed\n");
+        return 0;
+    }
 
-    deQ(q); // should throw
-    enQ((int *)1, q);
-    enQ((int *)2, q);
-    enQ((int *)3, q);
-    enQ((int *)4, q);
-    deQ(q); //1
-    deQ(q); //2
-    printf("root is: %d", (int *)(q->root->object));
-    printf("tail is: %d", (int *)(q->tail->object));
-    destroyQ(q);
+    if (pthread_cond_init(&cond, NULL) != 0)
+    {
+        printf("\n mutex init has failed\n");
+        return 0;
+    }
+    pthread_t thread1[2];
+    pthread_create(&thread1[0], NULL, task1, (void *)"thread 1");
+    
+    pthread_create(&thread1[1], NULL, task1, (void *)"thread 2");
+    
+    std::cout << *((char *)deQ(q)) << std::endl;
+
+    printf("deqq\n");
+
+    pthread_join(thread1[0], NULL);
+    pthread_join(thread1[1], NULL);
+    return 1;
+
+
+    
+    // deQ(q); // should throw
+    // enQ((int *)1, q);
+    // enQ((int *)2, q);
+    // enQ((int *)3, q);
+    // enQ((int *)4, q);
+    // deQ(q); //1
+    // deQ(q); //2
+    // printf("root is: %d", (int *)(q->root->object));
+    // printf("tail is: %d", (int *)(q->tail->object));
+    // destroyQ(q);
 
 }
