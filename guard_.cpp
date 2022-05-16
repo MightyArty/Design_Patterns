@@ -4,6 +4,13 @@
 #include <string.h>
 #include <thread>
 
+/**
+ * Answer for the question: Can we use 'guard()' to defend 'strtok()'?
+ * strtok modifies and use global (or static) variables, and does this in NOT-THREAD-SAFE WAY
+ * so it would not be safe to use strtok in a multi-threading envoiroment without GUARDS
+ * SO --> we can use guard to defend strtok
+ */
+
 void *ptr;
 int global = 0;
 std::mutex mtx;

@@ -65,8 +65,11 @@ struct Student {
     }
 };
 
+/**
+ * @brief Just for wasting time
+ * 
+ */
 void message(Student &, Student &){
-    // waisting time
     std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
