@@ -3,48 +3,84 @@
 #include <mutex>
 #include <string.h>
 #include <thread>
+#include <stdio.h>
+#include <unistd.h>
+
+void red()
+{
+    printf("\033[1;31m");
+}
+void yellow()
+{
+    printf("\033[1;33m");
+}
+void blue()
+{
+    printf("\033[1;34m");
+}
+void green()
+{
+    printf("\033[1;32m");
+}
+void cyan()
+{
+    printf("\033[1;36m");
+}
+void reset()
+{
+    printf("\033[0m");
+}
+
 
 using namespace std;
 
-void *ptr;  //global pointer
-std::mutex mtx;
+void *global_ptr;  //global pointer
+pthread_mutex_t mtx_lock;
 
-/**
- * @brief Simple odd printing function
- */
-void print_even(void *element){
-    element = malloc(sizeof(int));
-    if(element == NULL){
-        std::cout << "malloc error" << std::endl;
-        return;
-    }
+class guard{
+    public:
+        guard();
+        ~guard();
+};
 
-    int temp = *((int *) element);
-    if(temp % 2 == 0){
-        std::cout << "Given number is even" << std::endl;
-    }
-    else throw (std::logic_error("Given number is not even"));
+guard::guard(){
+    pthread_mutex_lock(&mtx_lock);
+    green();
+    std::cout << "Initializing guard and mutex lock" << std::endl;
 }
 
-void *task(void *p_id){
-    try{
-        std::lock_guard<std::mutex> lck (mtx);
-        print_even(p_id);
-    }
-    catch(std::logic_error&){
-        std::cout << "[exeption caught]" << std::endl;
-    }
-    return 0;
+guard::~guard(){
+    pthread_mutex_unlock(&mtx_lock);
+    red();
+    std::cout << "Destroying guard and unlocking mutex" << std::endl;
+}
+
+void *task(void *args){
+    guard guard{
+    };
+    sleep(3);
+
+    blue();
+    std::cout << "Global pointer before change: " << global_ptr << std::endl;
+    global_ptr = args;
+    int *local_ptr = (int *)global_ptr;
+    yellow();
+    std::cout << "Global pointer after change: " << *local_ptr << std::endl;
+    return NULL;
 }
 
 int main(){
-    pthread_t thread_arr[10];
-    int temp = 0;
-    for(int i = 0 ; i < 10 ; i++){
-        pthread_create(&thread_arr[i], NULL, task, &temp);
+    pthread_mutex_init(&mtx_lock, NULL);
+    pthread_t threads[4];
+    int a = 5;
+    for(int i = 0 ; i < 4 ; i++){
+        pthread_create(&threads[i], NULL, &task, &a);
     }
-    for(int i = 0 ; i < 10 ; i++){
-        pthread_join(thread_arr[i], NULL);
+    for(int i = 0 ; i < 4 ; i++){
+        pthread_join(threads[i], NULL);
     }
+    cyan();
+    std::cout << "Finished :)" << std::endl;
+    reset();
     return 0;
 }
