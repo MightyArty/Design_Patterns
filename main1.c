@@ -1,6 +1,8 @@
 #include "queue.hpp"
 #include "active_object.hpp"
 
+
+
 void red()
 {
     printf("\033[1;31m");
@@ -113,11 +115,11 @@ void *task1(void *a){
     return 0;
 }
 
-a_obj newAO(struct queue *q, void(*func1)(), void(*func2)()){
-    a_obj ao;
-    ao.q = q;
-    ao.func1 = func1;
-    ao.func2 = func2;
+a_obj *newAO(struct queue *q, void(*func1)(), void(*func2)()){
+    a_obj *a_o = (a_obj*)malloc(sizeof(a_obj));
+    a_o->q = q;
+    a_o->func1 = func1;
+    a_o->func2 = func2;
     // dealing with every ao object in the queue
     p_node curr = q->root;
     while(curr != NULL){
@@ -126,15 +128,16 @@ a_obj newAO(struct queue *q, void(*func1)(), void(*func2)()){
     }
     printf("Doint something else..\n");
     func2();
-    return ao;
+    return a_o;
 }
 
-void destroyAO(a_obj ao){
+void destroyAO(a_obj *ao){
     red();
     printf("Trying to destroy active object\n");
-    destroyQ(ao.q);
-    pthread_cancel(ao.func1);
-    pthread_cancel(ao.func2);
+    destroyQ(ao->q);
+    pthread_cancel(ao->func1);
+    pthread_cancel(ao->func2);
+    free(ao);
     green();
     printf("Active object has been destroyed\n");
 }

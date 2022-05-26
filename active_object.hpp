@@ -13,10 +13,10 @@ typedef struct a_objcet{
  * 3. function that deals with cleanup the queue object
  * @return struct a_object* 
  */
-a_obj newAO(struct queue *, void (*func1)(), void (*func2)());
+a_obj *newAO(struct queue *, void (*func1)(), void (*func2)());
 
 /**
  * @brief this function will get an active object
  * and will destroy it
  */
-void destroyAO(a_obj ao);
+void destroyAO(a_obj *ao);
