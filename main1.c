@@ -24,11 +24,9 @@ void reset()
     printf("\033[0m");
 }
 
-/**
- * Implementation of Q1,Q2,Q3
- */
-
 p_queue q;
+p_queue q1;
+p_queue q2;
 
 /**
  * initializing mutex and condition variable
@@ -105,16 +103,6 @@ void *deQ(p_queue q){
     return result;
 }
 
-void *task1(void *a){
-    sleep(3);
-    enQ((void *)"1", q);
-    enQ((void *)"2", q);
-    enQ((void *)"3", q);
-    enQ((void *)"4", q);
-    enQ((void *)"5", q);
-    return 0;
-}
-
 a_obj *newAO(struct queue *q, void(*func1)(), void(*func2)()){
     a_obj *a_o = (a_obj*)malloc(sizeof(a_obj));
     a_o->q = q;
@@ -131,12 +119,17 @@ a_obj *newAO(struct queue *q, void(*func1)(), void(*func2)()){
     return a_o;
 }
 
+void *task1(void *a){
+    sleep(2);
+    a_obj *a_o = (a_obj *) a;
+    newAO(a_o->q, a_o->func1, a_o->func2);
+}
+
 void destroyAO(a_obj *ao){
     red();
     printf("Trying to destroy active object\n");
     destroyQ(ao->q);
-    pthread_cancel(ao->func1);
-    pthread_cancel(ao->func2);
+    pthread_cancel(ao->thread1);
     free(ao);
     green();
     printf("Active object has been destroyed\n");
@@ -155,11 +148,18 @@ void func2(){
 /**
  * @brief This function will get some string
  * and will activate ceasar cipher on int by key value : 1
- * if the original letter was capital it will remain capital
- * check if the string have only english letters
- * if not return
- * @param str: given string to encrypt
  */
+void *a_obj1(void *args){
+    if(args == NULL)
+        return;
+    p_node node = (p_node) args;
+    char *str = malloc(sizeof(node->object));
+    str = node->object;
+    ceasar_cipher(str);
+    node->object = str;
+    return 0;
+}
+
 void ceasar_cipher(char *str){
     int len = strlen(str);
     if(len < 1){
@@ -191,8 +191,18 @@ void ceasar_cipher(char *str){
  * @brief This function will get some string
  * trasform capital letters to small
  * and small letters to capital 
- * @param str: given string to check
  */
+void *a_obj2(void *args){
+    if(args == NULL)
+        return;
+    p_node node = (p_node) args;
+    char *str = malloc(sizeof(node->object));
+    str = node->object;
+    transform(str);
+    node->object = str;
+    return 0;
+}
+
 void transform(char *str){
     int len = strlen(str);
     if(len < 1){
@@ -219,28 +229,35 @@ void transform(char *str){
 
 int main(){
     q = createQ();
-    if (pthread_mutex_init(&lock, NULL) != 0)
-    {
-        printf("\n mutex init has failed\n");
-        return 0;
-    }
-
-    if (pthread_cond_init(&cond, NULL) != 0)
-    {
-        printf("\n mutex init has failed\n");
-        return 0;
-    }
-    pthread_t thread1[2];
-    pthread_create(&thread1[0], NULL, task1, (void *)"thread 1");
+    q1 = createQ();
+    q2 = createQ();
+    enQ("artem", q);
+    enQ("barak", q);
+    enQ("good", q);
     
-    pthread_create(&thread1[1], NULL, task1, (void *)"thread 2");
+    a_obj *first = (a_obj *)malloc(sizeof(a_obj));
+    a_obj *second = (a_obj *)malloc(sizeof(a_obj));
+    a_obj *third = (a_obj *)malloc(sizeof(a_obj));
 
-    printf("1. %c \n", *((char *)deQ(q)));
-    printf("2. %c \n", *((char *)deQ(q)));
-    printf("3. %c \n", *((char *)deQ(q)));
+    first->q = q;
+    second->q = q1;
+    third->q = q2;
 
-    pthread_join(thread1[0], NULL);
-    pthread_join(thread1[1], NULL);
+    first->func1 = a_obj1;
+    second->func1 = a_obj2; 
+
+
+    // pthread_t thread1[2];
+    // pthread_create(&thread1[0], NULL, task1, (void *)"thread 1");
+    
+    // pthread_create(&thread1[1], NULL, task1, (void *)"thread 2");
+
+    // printf("1. %c \n", *((char *)deQ(q)));
+    // printf("2. %c \n", *((char *)deQ(q)));
+    // printf("3. %c \n", *((char *)deQ(q)));
+
+    // pthread_join(thread1[0], NULL);
+    // pthread_join(thread1[1], NULL);
     return 1;
 
 }
