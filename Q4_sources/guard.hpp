@@ -21,19 +21,7 @@ namespace design
     class guard
     {
     public:
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         guard();
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         ~guard();
     };
 }

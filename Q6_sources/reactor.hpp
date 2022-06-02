@@ -36,55 +36,31 @@ namespace re
 
     private:
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief reactor constructor
          */
         Reactor();
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         ~Reactor();
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief running func
          */
         void run();
 
     public:
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         void info();
     public:
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief create new reactor
          */
         static void *newReactor();
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief this func will get pointer to Reactor
+         * pointer to some func and file descriptor
+         * and will install function that will handle the output
          */
         static void InstallHandler(Reactor *, int, void (*func)());
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief will get pointer to Reactor
+         * and will free the handler to fd
          */
         static void RemoveHandler(Reactor *reactor);
     };

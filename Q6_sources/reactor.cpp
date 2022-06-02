@@ -21,6 +21,11 @@ void Reactor::InstallHandler(Reactor *reactor, int fd, void (*func)())
 }
 void Reactor::RemoveHandler(Reactor *reactor)
 {
+    reactor->index = 0;
+    reactor->fd_count = 0;
+    reactor->fd_size = 0;
+    reactor->handlers = NULL;
+    reactor->~Reactor();
 }
 void Reactor::run()
 {

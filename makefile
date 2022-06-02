@@ -37,7 +37,7 @@ SOURCES_Q6=$(wildcard $(SOURCE_PATH_Q6)/*.cpp)
 HEADERS_Q6=$(wildcard $(SOURCE_PATH_Q6)/*.hpp)
 OBJECTS_Q6=$(subst Q6_sources/,Q6_objects/,$(subst .cpp,.o,$(SOURCES_Q6)))
 
-CXX=clang++-9 
+CXX=clang++-9
 
 
 CXXVERSION=c++2a

@@ -81,24 +81,15 @@ namespace active
     void *transform(void *str);
 
     /**
-     * @brief This function will get some string
-     * trasform capital letters to small
-     * and small letters to capital
-     * @param str: given string to check
+     * @brief This func will send the finished processed string to the client
      */
     void *sendRes(void *node);
     /**
-     * @brief This function will get some string
-     * trasform capital letters to small
-     * and small letters to capital
-     * @param str: given string to check
+     * @brief simple print func
      */
     void *func1(void *node);
     /**
-     * @brief This function will get some string
-     * trasform capital letters to small
-     * and small letters to capital
-     * @param str: given string to check
+     * @brief simple print func
      */
     void *func2(void *node, p_queue);
 }

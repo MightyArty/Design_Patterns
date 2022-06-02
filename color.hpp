@@ -14,9 +14,23 @@
  * @return none.
  */
 #define YELLOW printf("\033[1;33m")
-
+/**
+ * @brief Colloring the text in blue color
+ * just for fun :)
+ * @return none.
+ */
 #define BLUE printf("\033[0;34m")
+/**
+ * @brief Colloring the text in green color
+ * just for fun :)
+ * @return none.
+ */
 #define GREEN printf("\033[0;32m")
+/**
+ * @brief Colloring the text in cyan color
+ * just for fun :)
+ * @return none.
+ */
 #define CYAN printf("\033[1;36m")
 /**
  * @brief Reseting the text color back to default

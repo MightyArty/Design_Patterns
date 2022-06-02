@@ -15,51 +15,21 @@ namespace Singelton
     {
     public:
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief create new instace
          */
         static T *Instance();
         /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
+         * @brief destroy the instace
          */
         static void destroy();
 
     private:
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         MapFile(MapFile const &) = delete;
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         MapFile &operator=(MapFile const &) = delete;
 
     protected:
         static T *m_instance;
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         MapFile();
-        /**
-         * @brief This function will get some string
-         * trasform capital letters to small
-         * and small letters to capital
-         * @param str: given string to check
-         */
         ~MapFile();
     };
 
