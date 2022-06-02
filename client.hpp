@@ -28,6 +28,7 @@ char wirter[BUFFSIZE];
 char reader[BUFFSIZE];
 int sockFd;
 int mc;
+int stop;
 /**
  * @brief 
  *

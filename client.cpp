@@ -116,7 +116,7 @@ int client(int argc, char *argv[])
 }
 void *task(void *args)
 {
-    while (true)
+    while (stop)
     {
         bzero(reader, BUFFSIZE);
         read(sockFd, reader, BUFFSIZE);
@@ -129,6 +129,7 @@ void *task(void *args)
         mc++;
         reset();
     }
+    return 0;
 }
 int main(int argc, char *argv[])
 {
@@ -137,6 +138,7 @@ int main(int argc, char *argv[])
     signal(SIGTSTP, sig_handler);
     signal(SIGQUIT, sig_handler);
     mc=0;
+    stop=1;
     if (!client(argc, argv))
         return 0;
     pthread_t recvThread;
@@ -156,8 +158,10 @@ int main(int argc, char *argv[])
             close(sockFd);
             red();
             cout << "Try to close client" << endl;
+            stop=0;
             break;
         }
     }
     pthread_join(recvThread, NULL);
+    return 1;
 }
