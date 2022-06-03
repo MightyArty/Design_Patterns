@@ -1,4 +1,4 @@
-* Sixth assigment in Operating System Course
+# By Artem Shabalin & Barak Sharabi
 
 # Design_Patterns
 
