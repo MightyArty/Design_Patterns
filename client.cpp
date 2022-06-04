@@ -121,6 +121,11 @@ void *task(void *args)
         bzero(reader, BUFFSIZE);
         read(sockFd, reader, BUFFSIZE);
         red();
+        if (strcmp(reader, "EXIT") == 0)
+        {
+            close(sockFd);
+            exit(1);
+        }
         if (strcmp(reader, "(-1)") == 0)
             printf("\nERROR: Invaild commands\n");
         else
@@ -137,8 +142,8 @@ int main(int argc, char *argv[])
     signal(SIGINT, sig_handler);
     signal(SIGTSTP, sig_handler);
     signal(SIGQUIT, sig_handler);
-    mc=0;
-    stop=1;
+    mc = 0;
+    stop = 1;
     if (!client(argc, argv))
         return 0;
     pthread_t recvThread;
@@ -158,7 +163,7 @@ int main(int argc, char *argv[])
             close(sockFd);
             red();
             cout << "Try to close client" << endl;
-            stop=0;
+            stop = 0;
             break;
         }
     }

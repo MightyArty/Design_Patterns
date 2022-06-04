@@ -1,5 +1,4 @@
 #include "guard.hpp"
-using namespace design;
 
 /*
 NO
@@ -23,11 +22,10 @@ namespace design
     }
 }
 
-void *task(void *args)
+void *task_guard(void *args)
 {
     guard guard{};
     sleep(2);
-
     BLUE;
     std::cout << "Global pointer before change: " << global_ptr << std::endl;
     int local_ptr;
@@ -36,15 +34,14 @@ void *task(void *args)
     std::cout << "Global pointer after change: " << global_ptr << std::endl;
     return NULL;
 }
-
-int main()
+int guard_Test()
 {
     pthread_mutex_init(&mtx_lock, NULL);
     pthread_t threads[4];
     int a = 5;
     for (int i = 0; i < 4; i++)
     {
-        pthread_create(&threads[i], NULL, &task, &i);
+        pthread_create(&threads[i], NULL, &task_guard, &i);
     }
     for (int i = 0; i < 4; i++)
     {
@@ -54,4 +51,11 @@ int main()
     std::cout << "Finished :)" << std::endl;
     RESET;
     return 0;
+}
+int main()
+{
+    system("setterm -bold on");
+    cout << "________________________________ - Q4 - __________________________________" << endl;
+    system("setterm -bold off");
+    return guard_Test();
 }

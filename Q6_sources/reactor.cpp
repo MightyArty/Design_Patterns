@@ -29,6 +29,16 @@ void Reactor::RemoveHandler(Reactor *reactor)
 }
 void Reactor::run()
 {
+    cout << "Open Two another terminal and run the command " << endl;
+    cout << "Now run the command At each of the terminals";
+    YELLOW;
+    cout << "./client " << portNo << endl;
+    RESET;
+    cout << "How to use the programm from client: " << endl;
+    cout << "Enter stuff: <Write something you would like to send>" << endl;
+    CYAN;
+    cout << "To close the program send the command EXIT From one of the client " << endl;
+    RESET;
     while (!stop)
     {
 
@@ -47,7 +57,7 @@ void Reactor::run()
                 int fd = p_fds[i].fd;
                 if (fd == p_fds[0].fd)
                 {
-                    int newfd = acceptType(handlers[0])(fd, (struct sockaddr *)&clntAdd, &len);
+                    int newfd = acceptType(handlers[0])(fd, (struct sockaddr *)&_clntAdd, &len);
                     if (newfd < 0)
                     {
                         std::cerr << "Cannot accept connection" << std::endl;
@@ -81,6 +91,7 @@ void Reactor::run()
                     }
                     else
                     {
+
                         for (int j = 0; j < fd_count; j++)
                         {
                             // Send to everyone!
@@ -96,6 +107,11 @@ void Reactor::run()
                             }
                         }
                         send(sender_fd, "Send Succsess", 13, 0);
+                        if (strcmp(buf, "EXIT") == 0)
+                        {
+                            Reactor::RemoveHandler(this);
+                            exit(1);
+                        }
                     }
                 }
             }
@@ -138,7 +154,7 @@ Reactor::~Reactor()
 int server(int argc, char *argv[])
 {
     int listenFd;
-    int portNo;
+
     if (argc >= 2)
     {
         try
@@ -153,15 +169,14 @@ int server(int argc, char *argv[])
         {
             std::cerr << e.what() << '\n';
             portNo = htons(3003);
-            std::cout << "Port :" << portNo << std::endl;
         }
     }
     else
     {
         portNo = htons(3003);
-        std::cout << "Port :" << portNo << std::endl;
     }
 
+    std::cout << "Server Run on Port :" << portNo << std::endl;
     // create socket
     listenFd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -171,14 +186,14 @@ int server(int argc, char *argv[])
         return listenFd;
     }
 
-    bzero((char *)&svrAdd, sizeof(svrAdd));
+    bzero((char *)&_svrAdd, sizeof(_svrAdd));
 
-    svrAdd.sin_family = AF_INET;
-    svrAdd.sin_addr.s_addr = INADDR_ANY;
-    svrAdd.sin_port = htons(portNo);
+    _svrAdd.sin_family = AF_INET;
+    _svrAdd.sin_addr.s_addr = INADDR_ANY;
+    _svrAdd.sin_port = htons(portNo);
 
     // bind socket
-    if (bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
+    if (bind(listenFd, (struct sockaddr *)&_svrAdd, sizeof(_svrAdd)) < 0)
     {
         std::cerr << "Cannot bind" << std::endl;
         return 0;
@@ -189,11 +204,14 @@ int server(int argc, char *argv[])
         printf("\n listen has failed\n");
         return 0;
     }
-
+    std::cout << "Listening" << std::endl;
     return listenFd;
 }
 int main(int argc, char *argv[])
 {
+    system("setterm -bold on");
+    cout << "________________________________ - Q6 - __________________________________" << endl;
+    system("setterm -bold off");
     Reactor *r = (Reactor *)Reactor::newReactor();
     Reactor::InstallHandler(r, server(argc, argv), (void (*)())accept);
 

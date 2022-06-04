@@ -1,6 +1,5 @@
 #ifndef __OBJECT__
 #define __OBJECT__
-#include <functional>
 #include "queue.hpp"
 #include "../color.hpp"
 #include <string.h>

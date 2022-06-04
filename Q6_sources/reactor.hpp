@@ -12,12 +12,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <poll.h>
+#include "../color.hpp"
 #define BUFFSIZE 1024
-
+int portNo;
 typedef int (*acceptType)(int, sockaddr *__restrict__, socklen_t *__restrict);
 typedef int (*recvType)(int, void *__buf, size_t __nbytes);
 socklen_t len; // store size of the address
-struct sockaddr_in svrAdd, clntAdd;
+struct sockaddr_in _svrAdd, _clntAdd;
 using namespace std;
 
 namespace re

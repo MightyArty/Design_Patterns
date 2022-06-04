@@ -1,36 +1,32 @@
 #include "singelton.hpp"
-using namespace Singelton;
 
-namespace Singelton
+template <typename T>
+T *MapFile<T>::m_instance = 0;
+
+template <typename T>
+T *MapFile<T>::Instance()
 {
-    template <typename T>
-    T *MapFile<T>::m_instance = 0;
-
-    template <typename T>
-    T *MapFile<T>::Instance()
+    if (!m_instance)
     {
-        if (!m_instance)
-        {
-            MapFile<T>::m_instance = new T();
-        }
-
-        return m_instance;
+        MapFile<T>::m_instance = new T();
     }
 
-    template <typename T>
-    void MapFile<T>::destroy()
-    {
-        delete MapFile<T>::m_instance;
-        MapFile<T>::m_instance = 0;
-    }
-    template <typename T>
-    MapFile<T>::MapFile() { m_instance = static_cast<T *>(this); };
-
-    template <typename T>
-    MapFile<T>::~MapFile(){};
+    return m_instance;
 }
 
-int main(int argc, char const *argv[])
+template <typename T>
+void MapFile<T>::destroy()
+{
+    delete MapFile<T>::m_instance;
+    MapFile<T>::m_instance = 0;
+}
+template <typename T>
+MapFile<T>::MapFile() { m_instance = static_cast<T *>(this); };
+
+template <typename T>
+MapFile<T>::~MapFile(){};
+
+int Test()
 {
     int fd = -1;
     char *file_name = (char *)"./Q5_sources/fd.txt";
@@ -62,6 +58,13 @@ int main(int argc, char const *argv[])
     cout << "Check if them equals" << endl;
     cout << "(mem == mem2)? -> " << ((mem == mem2) ? "True" : "False") << endl;
     cout << "(*mem == *mem2)? -> " << ((*mem == *mem2) ? "True" : "False") << endl;
-    RESET;    
+    RESET;
     return 0;
+}
+int main(int argc, char const *argv[])
+{
+    system("setterm -bold on");
+      cout << "________________________________ - Q5 - __________________________________" << endl;
+      system("setterm -bold off");
+    return Test();
 }
