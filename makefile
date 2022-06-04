@@ -39,6 +39,7 @@ OBJECTS_Q6=$(subst Q6_sources/,Q6_objects/,$(subst .cpp,.o,$(SOURCES_Q6)))
 
 CXX=clang++-9
 
+OBJECTS=main.o guard.o singelton.o reactor.o client.o
 
 CXXVERSION=c++2a
 
@@ -50,6 +51,7 @@ CXXFLAGS_Q6=-std=$(CXXVERSION) -Werror -Wsign-conversion -I $(SOURCE_PATH_Q6)
 
 TIDY_FLAGS=-extra-arg=-std=$(CXXVERSION) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=*
 VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
+FLAGS=-fPIC
 
 run: main guard reactor singelton libDesign.a client
 	./main 4551 && ./guard && ./singelton && ./reactor 8100
