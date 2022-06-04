@@ -51,8 +51,8 @@ CXXFLAGS_Q6=-std=$(CXXVERSION) -Werror -Wsign-conversion -I $(SOURCE_PATH_Q6)
 TIDY_FLAGS=-extra-arg=-std=$(CXXVERSION) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=*
 VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
 
-run: main guard reactor singelton client
-#	./$^
+run: main guard reactor singelton libDesign.a client
+	./main 4551 && ./guard && ./singelton && ./reactor 8100
 
 main: main1.o $(OBJECTS_Q1-3)
 	$(CXX) $(CXXFLAGS_Q1-3) $^ -o $@ -pthread
@@ -70,16 +70,17 @@ client:client.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ -pthread
 
 
-test: TestRunner.o Test.o $(OBJECTS_Q1-3) $(OBJECTS_Q4) $(OBJECTS_Q5) $(OBJECTS_Q6)
-	$(CXX) $(CXXFLAGS) $^ -o $@ -pthread
+# test: TestRunner.o Test.o $(OBJECTS_Q1-3) $(OBJECTS_Q4) $(OBJECTS_Q5) $(OBJECTS_Q6)
+# 	$(CXX) $(CXXFLAGS) $^ -o $@ -pthread
+
+# test: TestRunner.o Test.o libDesign.a
+# 	$(CXX) $(CXXFLAGS) $^ -o $@ -pthread
+
+libDesign.a: $(OBJECTS_Q1-3) $(OBJECTS_Q4) $(OBJECTS_Q5) $(OBJECTS_Q6)
+	ar -rcs libDesign.a  $(OBJECTS_Q1-3) $(OBJECTS_Q4) $(OBJECTS_Q5) $(OBJECTS_Q6) 
 
 tidy:
 	clang-tidy $(HEADERS) $(TIDY_FLAGS) --
-
-valgrind: demo test
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./demo 2>&1 | { egrep "lost| at " || true; }
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./test 2>&1 | { egrep "lost| at " || true; }
-
 
 %.o: %.c* $(HEADERS_Q1-3) $(HEADERS_Q4) $(HEADERS_Q5) $(HEADERS_Q6)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
@@ -107,4 +108,4 @@ run_r:
 	./reactor
 
 clean:
-	rm -f $(OBJECTS_Q1-3) $(OBJECTS_Q4) $(OBJECTS_Q5) $(OBJECTS_Q6)  *.o Q5_sources/fd.txt test main guard reactor singelton client
+	rm -f libDesign.a $(OBJECTS_Q1-3) $(OBJECTS_Q4) $(OBJECTS_Q5) $(OBJECTS_Q6)  *.o Q5_sources/fd.txt test main guard reactor singelton client

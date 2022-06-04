@@ -16,14 +16,13 @@ int server(int argc, char *argv[])
         {
             std::cerr << e.what() << '\n';
             portNo = htons(3003);
-            std::cout << "Port :" << portNo << std::endl;
         }
     }
     else
     {
         portNo = htons(3003);
-        std::cout << "Port :" << portNo << std::endl;
     }
+    std::cout << "Port :" << portNo << std::endl;
 
     // create socket
     listenFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -115,7 +114,10 @@ void *task1(void *dummyPt)
 void *task2(void *a)
 {
     p_queue q = (p_queue)a;
-    sleep(2);
+    BLUE;
+    cout << "Thread number - " << pthread_self() << " is working!\n";
+    RESET;
+    sleep(1);
     enQ((void *)"1", q);
     enQ((void *)"2", q);
     enQ((void *)"3", q);
@@ -126,12 +128,13 @@ void *task2(void *a)
 void simulation_Queue()
 {
     p_queue q = createQ();
-    q->id=1;
+    q->id = 1;
     pthread_t thread1[2];
     void *arg = {q};
     pthread_create(&thread1[0], NULL, task2, arg);
 
     pthread_create(&thread1[1], NULL, task2, arg);
+    cout << "Try to Dequeue" << endl;
     printf("1. %c \n", *((char *)deQ(q)));
     printf("2. %c \n", *((char *)deQ(q)));
     printf("3. %c \n", *((char *)deQ(q)));
@@ -177,37 +180,46 @@ void simulation_ActiveObject_PipeLine(int argc, char *argv[])
     signal(SIGINT, sig_handler);
     signal(SIGTSTP, sig_handler);
     signal(SIGQUIT, sig_handler);
+
+    sleep(1);
     if (server(argc, argv) < 0)
         return;
+    sleep(1);
+    cout << "Open another terminal and run the command ";
+    YELLOW;
+    cout << "make client" << endl;
+    RESET;
+    cout << "Now run the command";
+    YELLOW;
+    cout << " ./client " << portNo << endl;
+    RESET;
+    cout << "How to use the programm from client: " << endl;
 
-    while (noThread < 100)
+    cout << "PUSH [your input] : inserting element into the queue " << endl;
+    cout << "EXIT : To proceed to the next test should be sent from the client EXIT" << endl;
+
+    std::cout << "Listening" << std::endl;
+    socklen_t len = sizeof(clntAdd);
+    // this is where client connects. svr will hang in this mode until client conn
+    int connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
+
+    if (connFd < 0)
     {
-        std::cout << "Listening"     << std::endl;
-        socklen_t len = sizeof(clntAdd);
-        // this is where client connects. svr will hang in this mode until client conn
-        int connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
-
-        if (connFd < 0)
-        {
-            std::cerr << "Cannot accept connection" << std::endl;
-            return;
-        }
-        else
-        {
-            std::cout << "Connection successful" << std::endl;
-        }
-        int a[]{connFd, noThread};
-        int error = pthread_create(&threadA[noThread], NULL, task1, (void *)&a);
-        if (error != 0)
-            printf("\nThread can't be created :[%s]",
-                   strerror(error));
-        noThread++;
+        std::cerr << "Cannot accept connection" << std::endl;
+        return;
     }
-
-    for (int i = 0; i < 100; i++)
+    else
     {
-        pthread_join(threadA[i], NULL);
+        std::cout << "Connection successful" << std::endl;
     }
+    int a[]{connFd, 0};
+    int error = pthread_create(&threadA[0], NULL, task1, (void *)&a);
+    if (error != 0)
+        printf("\nThread can't be created :[%s]",
+               strerror(error));
+
+    pthread_join(threadA[0], NULL);
+
     if (q1->size != 0)
         destroyQ(q1);
 
@@ -218,17 +230,23 @@ void simulation_ActiveObject_PipeLine(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
     // Q1
-    cout << "----- Run Q1 -----" << endl;
+    system("setterm -bold on");
+    cout << "________________________________ - Q1 - __________________________________" << endl;
+    system("setterm -bold off");
     simulation_Queue();
     cout << "------ End -------" << endl;
     // // Q2
-    cout << "----- Run Q2 -----" << endl;
+    system("setterm -bold on");
+    cout << "________________________________ - Q2 - __________________________________" << endl;
+    system("setterm -bold off");
     simulation_ActiveObject();
     cout << "------ End -------" << endl;
     // // Q3
-    cout << "----- Run Q3 -----" << endl;
+    system("setterm -bold on");
+    cout << "________________________________- Q3 - __________________________________" << endl;
+    system("setterm -bold off");
     simulation_ActiveObject_PipeLine(argc, argv);
     cout << "------ End -------" << endl;
 
-    return 1;
+    return 0;
 }

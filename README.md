@@ -87,7 +87,6 @@ $ git clone https://github.com/MightyArty/Design_pattern.git
 $ cd Design_pattern
 # Open the terminal on Linux
 $ Run "make run"
-$ Run Test "./test"
 ```
 
 ## Cleaning files:

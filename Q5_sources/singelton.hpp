@@ -34,5 +34,6 @@ namespace Singelton
     };
 
 }
-
+int Test();
+using namespace Singelton;
 #endif
