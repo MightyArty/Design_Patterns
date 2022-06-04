@@ -39,6 +39,7 @@ OBJECTS_Q6=$(subst Q6_sources/,Q6_objects/,$(subst .cpp,.o,$(SOURCES_Q6)))
 
 CXX=clang++-9
 
+OBJECTS=main.o guard.o singelton.o reactor.o client.o
 
 CXXVERSION=c++2a
 
@@ -50,8 +51,9 @@ CXXFLAGS_Q6=-std=$(CXXVERSION) -Werror -Wsign-conversion -I $(SOURCE_PATH_Q6)
 
 TIDY_FLAGS=-extra-arg=-std=$(CXXVERSION) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=*
 VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
+FLAGS=-fPIC
 
-run: main guard reactor singelton client
+run: main guard reactor singelton client lib.so
 #	./$^
 
 main: main1.o $(OBJECTS_Q1-3)
@@ -79,6 +81,10 @@ tidy:
 valgrind: demo test
 	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./demo 2>&1 | { egrep "lost| at " || true; }
 	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./test 2>&1 | { egrep "lost| at " || true; }
+
+# ----------------------------- SHARED LIBRARY AS ASKED ----------------------------
+lib.so: $(OBJECTS)
+	$(CXX) --shared -fPIC $(OBJECTS) -o lib.so
 
 
 %.o: %.c* $(HEADERS_Q1-3) $(HEADERS_Q4) $(HEADERS_Q5) $(HEADERS_Q6)
