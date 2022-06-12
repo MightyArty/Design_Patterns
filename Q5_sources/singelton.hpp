@@ -26,6 +26,7 @@ namespace Singelton
     private:
         MapFile(MapFile const &) = delete;
         MapFile &operator=(MapFile const &) = delete;
+        static pthread_mutex_t mutex;
 
     protected:
         static T *m_instance;
@@ -34,6 +35,8 @@ namespace Singelton
     };
 
 }
+template <typename T>
+pthread_mutex_t Singelton::MapFile<T>::mutex = PTHREAD_MUTEX_INITIALIZER;
 int Test();
 using namespace Singelton;
 #endif

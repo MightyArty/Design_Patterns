@@ -8,17 +8,21 @@ T *MapFile<T>::Instance()
 {
     if (!m_instance)
     {
+        pthread_mutex_lock(&mutex);
         MapFile<T>::m_instance = new T();
     }
-
+    pthread_mutex_unlock(&mutex);
     return m_instance;
 }
 
 template <typename T>
 void MapFile<T>::destroy()
 {
+    pthread_mutex_lock(&mutex);
+
     delete MapFile<T>::m_instance;
     MapFile<T>::m_instance = 0;
+    pthread_mutex_unlock(&mutex);
 }
 template <typename T>
 MapFile<T>::MapFile() { m_instance = static_cast<T *>(this); };
@@ -49,7 +53,7 @@ int Test()
     cout << "Print address of mem" << endl;
     cout << *mem << endl;
     GREEN;
-    cout << "Get instance to mem2 variable with Map File singelton class"  << endl;
+    cout << "Get instance to mem2 variable with Map File singelton class" << endl;
     BLUE;
     int **mem2 = Singelton::MapFile<int *>::Instance();
     cout << "Print address of mem2" << endl;
@@ -64,7 +68,7 @@ int Test()
 int main(int argc, char const *argv[])
 {
     system("setterm -bold on");
-      cout << "________________________________ - Q5 - __________________________________" << endl;
-      system("setterm -bold off");
+    cout << "________________________________ - Q5 - __________________________________" << endl;
+    system("setterm -bold off");
     return Test();
 }
